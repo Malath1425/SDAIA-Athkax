@@ -1,15 +1,20 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
 from statsmodels.stats.proportion import proportions_ztest
 
-def statistical_analysis():
+def statistical_analysis_and_chart():
     try:
-       # df = pd.read_csv('data/dataset.csv')
         # قراءة ملف البيانات من المجلد الرئيسي المشترك
         df = pd.read_csv('../data/dataset.csv')
     except FileNotFoundError:
-        print("عذراً، لم يتم العثور على ملف البيانات. تأكد من تشغيل الأيام السابقة أولاً.")
-        return
+        try:
+            df = pd.read_csv('data/dataset.csv')
+        except FileNotFoundError:
+            print("عذراً، لم يتم العثور على ملف البيانات. تأكد من وجوده في مجلد data.")
+            return
     
     print("--- 1. تحليل معدل التحويل (Conversion Rate Analysis) ---")
     conversion_summary = df.groupby('group')['converted'].agg(['count', 'sum', 'mean']).rename(
@@ -25,7 +30,6 @@ def statistical_analysis():
     z_stat, p_val = proportions_ztest(conversions, nobs)
     
     rate_a = conversion_summary.loc['A', 'conversion_rate']
-    rate_b = المرء = conversion_summary.loc['B', 'conversion_rate']
     rate_b = conversion_summary.loc['B', 'conversion_rate']
     uplift = (rate_b - rate_a) / rate_a * 100
     
@@ -40,5 +44,25 @@ def statistical_analysis():
     else:
         print("\n❌ النتيجة: الفروق ليست ذات دلالة إحصائية كافية.")
 
+    # --- 2. رسم وتصدير الرسم البياني الخاص بتحليل البيانات ---
+    # إنشاء مجلد المخرجات تلقائياً
+    os.makedirs('../outputs/charts', exist_ok=True)
+    os.makedirs('outputs/charts', exist_ok=True)
+    
+    plt.figure(figsize=(7, 5))
+    sns.barplot(x='group', y='converted', data=df, hue='group', palette='viridis', legend=False)
+    plt.title('A/B Testing: Conversion Rate by Group')
+    plt.ylabel('Conversion Rate')
+    plt.xlabel('Group')
+    
+    # إظهار الرسمة فوراً أمامك في الكولاب
+    plt.show()
+    
+    # حفظ الرسمة في المجلد المطلوب للمشروع
+    chart_path = '../outputs/charts/conversion_comparison.png'
+    plt.savefig(chart_path, bbox_inches='tight')
+    plt.savefig('outputs/charts/conversion_comparison.png', bbox_inches='tight')
+    print(f"📊 تم حفظ الرسم البياني بنجاح في المسار: {chart_path}")
+
 if __name__ == "__main__":
-    statistical_analysis()
+    statistical_analysis_and_chart()
