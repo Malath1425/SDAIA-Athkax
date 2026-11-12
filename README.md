@@ -44,5 +44,6 @@ p
 
 
 
-رابط أكاديمية سدايا على GitHub: https://github.com/SDAIAAcademy
+رابط أكاديمية سدايا على GitHub: https://github.com/SDAIAAcademy , اسم الدوره : التجارب واختبارات A/B والاستدلال السببي ( A/B Testing and Causal Inference ) 
 
+ 
